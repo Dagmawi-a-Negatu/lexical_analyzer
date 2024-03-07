@@ -79,3 +79,8 @@ void get_token(char *token_ptr)
 int is_delimiter(char ch) {
     return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\0';
 }
+
+int is_operator(char ch) {
+    // Add logic to determine if 'ch' is an operator
+    return strchr("+-*/^=<>()!;", ch) != NULL;
+}
