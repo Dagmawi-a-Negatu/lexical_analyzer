@@ -84,3 +84,8 @@ int is_operator(char ch) {
     // Add logic to determine if 'ch' is an operator
     return strchr("+-*/^=<>()!;", ch) != NULL;
 }
+
+void resetTokenBuffer() {
+    tokenLength = 0;
+    tokenBuffer[0] = '\0'; // Ensures the buffer is treated as an empty string.
+}
