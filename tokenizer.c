@@ -72,3 +72,7 @@ void get_token(char *token_ptr)
    // Add code here. Keep this file no longer than 50 lines of code.
    // Use helper functions. No duplicate code!
 }
+// A simple function to identify whether a character is a delimiter
+int is_delimiter(char ch) {
+    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\0';
+}
