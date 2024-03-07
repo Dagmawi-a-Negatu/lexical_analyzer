@@ -8,7 +8,7 @@
 #define TSIZE 20
 #define TRUE 1
 #define FALSE 0
-/ Define token categories for the lexemes recognized by the lexical analyzer
+/* Define token categories for the lexemes recognized by the lexical analyzer*/
 #define ADD_OP 1
 #define SUB_OP 2
 #define MULT_OP 3
