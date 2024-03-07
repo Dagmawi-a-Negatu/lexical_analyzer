@@ -54,8 +54,11 @@ int main(int argc, char* argv[]) {
       line = input_line;  // Sets a global pointer to the memory location
                            // where the input line resides.
 
-      // Add code here. Keep this file no longer than 50 lines of code.
-      // Use helper functions.
+      // Iterate through each character in the line
+        for(int i = 0; line[i] != '\0'; ++i) {
+            if(!(is_delimiter(line[i]))){
+               get_token(&line[i]);
+        }
 
    }
 
