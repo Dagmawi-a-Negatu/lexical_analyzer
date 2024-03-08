@@ -54,12 +54,10 @@ int main(int argc, char* argv[]) {
       line = input_line;  // Sets a global pointer to the memory location
                            // where the input line resides.
 
-      // Iterate through each character in the line
-        for(int i = 0; line[i] != '\0'; ++i) {
-            if(!(is_delimiter(line[i]))){
-               get_token(&line[i]);
-        }
-
+      start++;
+      get_token(&line[0]);
+      line_count ++;
+      
    }
 
    fclose(in_file);
@@ -73,11 +71,15 @@ int main(int argc, char* argv[]) {
 void get_token(char *token_ptr)
 {
    // Add code here. Keep this file no longer than 50 lines of code.
-   // Use helper functions. No duplicate code!
+   // Iterate through the string until we find a pre-defined lexeme.
+    while (*token_ptr != '\0') {
+        if (!(is_delimiter(*token_ptr))){
+           
+           
 }
 // A simple function to identify whether a character is a delimiter
 int is_delimiter(char ch) {
-    return ch == ' ' || ch == '\t' || ch == '\n' || ch == '\0';
+    return ch == ' ' || ch == '\t' || ch == '\n' ;
 }
 
 int is_operator(char ch) {
@@ -87,5 +89,5 @@ int is_operator(char ch) {
 
 void resetTokenBuffer() {
     tokenLength = 0;
-    tokenBuffer[0] = '\0'; // Ensures the buffer is treated as an empty string.
+    token[0] = '\0'; // Ensures the buffer is treated as an empty string.
 }
