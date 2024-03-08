@@ -15,6 +15,8 @@
 
 // global variables
 char *line;             // Global pointer to line of input
+char  token[TSIZE];      /* Spot to hold a token, fixed size */
+int tokenLength;     /*current size of token*/
 
 // (optional) can declare some additional variable if you want to
 
@@ -22,7 +24,6 @@ char *line;             // Global pointer to line of input
 * add comment
 */
 int main(int argc, char* argv[]) {
-   char  token[TSIZE];      /* Spot to hold a token, fixed size */
    char  input_line[LINE];  /* Line of input, fixed size        */
    FILE  *in_file = NULL;        /* File pointer                     */
    FILE  *out_file = NULL;
@@ -70,11 +71,16 @@ int main(int argc, char* argv[]) {
 */
 void get_token(char *token_ptr)
 {
+   // A string containing all the single-character operators we are interested in
+    char operators[] = {ADD_OP, SUB_OP, MULT_OP, DIV_OP, LEFT_PAREN, RIGHT_PAREN, EXPON_OP, '\0'};
+
    // Add code here. Keep this file no longer than 50 lines of code.
    // Iterate through the string until we find a pre-defined lexeme.
     while (*token_ptr != '\0') {
         if (!(is_delimiter(*token_ptr))){
-           
+           if(strchr(operators, *token_ptr) != NULL) {
+
+         
            
 }
 // A simple function to identify whether a character is a delimiter
