@@ -89,20 +89,28 @@ void resetTokenBuffer() {
     token[0] = '\0'; // Ensures the buffer is treated as an empty string.
 }
 
-void processLexeme(char *lexeme) {
+void processLexemes(char *lexeme) {
 
-    pcre *re;
     const char *error;
     int erroffset;
-    int ovector[30];
-    char subject[] = "Hello 123 World";
-    int rc;
+    pcre *re;
+    int ovector[30]; // Output vector for substring information
+    int rc, i;
 
-    // Compile the regex pattern
-    re = pcre_compile("\\d+", 0, &error, &erroffset, NULL);
-    if (!re) {
-        printf("PCRE compilation failed: %s\n", error);
-        return 1;
-    }  
+    // Pattern to match numbers (digits) or single character operators
+    char *pattern = "(\\d+|[=+\\-*/^<>])";
+
+    // Compile the regular expression pattern
+    re = pcre_compile(pattern, 0, &error, &erroffset, NULL);
+    if (re == NULL) {
+        printf("PCRE compilation failed at offset %d: %s\n", erroffset, error);
+        return;
+    }
+
+   // Execute the regular expression and find matches
+    i = 0;
+    while ((rc = pcre_exec(re, NULL, str, strlen(str), i, 0, ovector, sizeof(ovector)/sizeof(ovector[0]))) >= 0) {
+
+   
     
 }
