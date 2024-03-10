@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include "tokenizer.h"
+#include <pcre.h>
 
 // global variables
 char *line;             // Global pointer to line of input
@@ -71,29 +72,37 @@ int main(int argc, char* argv[]) {
 */
 void get_token(char *token_ptr)
 {
-   // A string containing all the single-character operators we are interested in
-    char operators[] = {ADD_OP, SUB_OP, MULT_OP, DIV_OP, LEFT_PAREN, RIGHT_PAREN, EXPON_OP, '\0'};
+   int update_token_ptr = 0;
+   resetTokenBuffer() 
 
    // Add code here. Keep this file no longer than 50 lines of code.
    // Iterate through the string until we find a pre-defined lexeme.
-    while (*token_ptr != '\0') {
-        if (!(is_delimiter(*token_ptr))){
-           if(strchr(operators, *token_ptr) != NULL) {
-
-         
-           
-}
-// A simple function to identify whether a character is a delimiter
-int is_delimiter(char ch) {
-    return ch == ' ' || ch == '\t' || ch == '\n' ;
+   processLexeme(token_ptr);
+   
+   token_ptr ++;
 }
 
-int is_operator(char ch) {
-    // Add logic to determine if 'ch' is an operator
-    return strchr("+-*/^=<>()!;", ch) != NULL;
-}
+
 
 void resetTokenBuffer() {
     tokenLength = 0;
     token[0] = '\0'; // Ensures the buffer is treated as an empty string.
+}
+
+void processLexeme(char *lexeme) {
+
+    pcre *re;
+    const char *error;
+    int erroffset;
+    int ovector[30];
+    char subject[] = "Hello 123 World";
+    int rc;
+
+    // Compile the regex pattern
+    re = pcre_compile("\\d+", 0, &error, &erroffset, NULL);
+    if (!re) {
+        printf("PCRE compilation failed: %s\n", error);
+        return 1;
+    }  
+    
 }
