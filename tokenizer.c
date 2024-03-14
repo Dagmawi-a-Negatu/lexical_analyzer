@@ -116,25 +116,20 @@ int main(int argc, char *argv[])
          strncpy(substring, token_ptr  + ovector[0], substring_length);         
          substring[substring_length] = '\0';                                    
                                                                                 
+        fprintf(out_file, "Lexeme %d is %s and is a", count, substring);        
+        count++;                                                                
+        i = ovector[1]; // Update position to continue searching                
                                                                                 
-        // if(strcmp(substring, ";") == 0){                                     
-            // fprintf(out_file, "---------------------------------------------------------\n"); // Separator line
+        if(strcmp(substring, ";") == 0){                                        
+            fprintf(out_file, "---------------------------------------------------------\n");
+            fprintf(out_file, "Statement #%d\n", ++line_count);                 
+            count = 0; // Reset lexeme count for the new statement              
                                                                                 
-            // line_count++;                                                    
-            // fprintf(out_file, "Statement %d", line_count++);                 
-                                                                                
-                                                                                
-                                                                                
-        // }                                                                    
-                                                                                
-         fprintf(out_file, "Lexeme %d is %s and is a %s\n", count, substring);  
-         count++;                                                               
-         i = ovector[1]; // Update position to continue searching               
+        }                                                                       
                                                                                 
     }                                                                           
                                                                                 
                                                                                 
-                                                                                
    // Free up the regular expression**/                                         
   pcre_free(re);                                                                
-} 
+}                
