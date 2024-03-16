@@ -9,22 +9,21 @@
 #define TRUE 1
 #define FALSE 0
 /* Define token categories for the lexemes recognized by the lexical analyzer*/
-#define ADD_OP '+'
-#define SUB_OP '-'
-#define MULT_OP '*'
-#define DIV_OP '/'
-#define LEFT_PAREN '('
-#define RIGHT_PAREN ')'
-#define EXPON_OP '^'
-#define ASSIGN_OP '='
-#define LESS_THAN_OP '<'
-#define GREATER_THAN_OP '>'
-#define NOT_OP '!'
-#define SEMI_COLON ';'
+typedef enum {
+    ADD_OP, SUB_OP, MULT_OP, DIV_OP,
+    LEFT_PAREN, RIGHT_PAREN, EXPON_OP, ASSIGN_OP,
+    LESS_THEN_OP, LESS_THEN_OR_EQUAL_OP, GREATER_THEN_OP, GREATER_THEN_OR_EQUAL_OP,
+    EQUALS_OP, NOT_OP, NOT_EQUALS_OP, SEMI_COLON,
+    INT_LITERAL, UNKNOWN
+} TokenCategory;
 
 /**
 * add comment
 */
+int isNotWhitespaceOrTab(char *);
+void process_last_match(char *, int , FILE *);
+void process_nonmatch(FILE *out_file, char *token_ptr);
 void get_token(char *);   
-
-
+void process_lexeme(char*);
+TokenCategory match_token_category(char *);
+void process_matching(FILE *, char * );

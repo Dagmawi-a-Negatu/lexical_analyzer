@@ -1,3 +1,4 @@
+                                           
 /**                                                                             
  * tokenizer.c - A simple token recognizer.                                     
  *                                                                              
@@ -14,14 +15,14 @@
 #include <pcre.h>                                                               
 #include <ctype.h>                                                              
 #include "tokenizer.h"                                                          
+#include <stdbool.h>
                                                                                 
 // global variables                                                             
 char *line; // Global pointer to line of input                                  
 // (optional) can declare some additional variable if you want to               
-                                                                                
+                                                                        
 FILE  *out_file = NULL;                                                         
-int count; //Global variable that counts lexeme                                 
-int line_count; //Gloabal varaible that counts statements                       
+int count; //Global variable that counts lexeme                                                    
                                                                                 
 // Function prototypes                                                          
 void get_token(char *token_ptr);                                                
@@ -58,19 +59,17 @@ int main(int argc, char *argv[])
   }                                                                             
                                                                                 
   // (optional) can add some code here if you want some here                    
-                                                                                
+  
+  count = 0; //lexeme count is 0                                                                              
   while (fgets(input_line, LINE, in_file) != NULL)                              
   {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
     // Use helper functions.                                                    
     line = input_line;                                                          
    // start = TRUE;                                                             
-                                                                                
-    count = 0; //lexeme count                                                   
+                                                       
     get_token(line);                                                            
-    // Output the statement number                                              
-   // fprintf(out_file, "Statement #%d\n", line_count);                         
-                                                                                
+    // Output the statement number                                                                                                                           
                                                                                 
                                                                                 
   }                                                                             
@@ -84,7 +83,7 @@ int main(int argc, char *argv[])
    * add javadoc-like comment                                                   
    */                                                                           
  void get_token(char *token_ptr)                                                
-  {                                                                             
+ {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
     // Use helper functions. No duplicate code!                                 
                                                                                 
@@ -94,8 +93,8 @@ int main(int argc, char *argv[])
     int ovector[30];                                                            
     int rc;                                                                     
                                                                                 
-    // Pattern to match numbers (digits) or single character operators          
-    char *pattern = "(\\d+|!=|==|<=|>=|\\*\\*|[=+\\-*/^<>();])";                
+    // Pattern to match numbers, single and double character operators          
+    char *pattern = "(\\d+|!=|==|<=|>=|[=+\\-*/^<>();])";                
                                                                                 
     // Compile the regular expression pattern                                   
     re = pcre_compile(pattern, 0, &error, &erroffset, NULL);                    
@@ -106,30 +105,154 @@ int main(int argc, char *argv[])
       printf("PCRE compilation failed at offset %d: %s\n", erroffset, error);   
       exit(EXIT_FAILURE);                                                       
     }                                                                           
+
                                                                                 
     // Execute the regular expression to find the next token                    
     // Execute the regular expression and find matches                          
-    int i = 0;                                                                  
-    while ((rc = pcre_exec(re, NULL, token_ptr, strlen(token_ptr), i, 0, ovector, sizeof(ovector)/sizeof(ovector[0]))) >= 0) {
+    int i = 0;
+    int previous_end = 0; // Track end of the last match
+    while ((rc = pcre_exec(re, NULL, token_ptr, strlen(token_ptr), i, 0,
+        ovector, sizeof(ovector)/sizeof(ovector[0]))) >= 0) {
+         
+         
+          // Handle non-matching segment before this match
+        if (ovector[0] > previous_end && isNotWhitespaceOrTab(token_ptr +
+            previous_end)) {
+        // There's a non-matching segment before this match
+            int nonmatch_length = ovector[0] - previous_end;
+            char nonmatch[128]; // Ensure this is adequately sized
+            strncpy(nonmatch, token_ptr + previous_end, nonmatch_length);
+            nonmatch[nonmatch_length] = '\0';
+
+        // Process non-matching segment (e.g., log error, handle as invalid input)
+            process_nonmatch(out_file, nonmatch);
+        }
+
+
          char substring[128]; // Buffer to hold the matched substring           
          int substring_length = ovector[1] - ovector[0];                        
          strncpy(substring, token_ptr  + ovector[0], substring_length);         
-         substring[substring_length] = '\0';                                    
+         substring[substring_length] = '\0';                                                                                                    
+         process_lexeme(substring);
+
+         previous_end = ovector[1];
+         i = ovector[1]; // Update position to continue searching                
+                                                                                                                                                       
+    }
                                                                                 
-        fprintf(out_file, "Lexeme %d is %s and is a", count, substring);        
-        count++;                                                                
-        i = ovector[1]; // Update position to continue searching                
-                                                                                
-        if(strcmp(substring, ";") == 0){                                        
-            fprintf(out_file, "---------------------------------------------------------\n");
-            fprintf(out_file, "Statement #%d\n", ++line_count);                 
-            count = 0; // Reset lexeme count for the new statement              
-                                                                                
-        }                                                                       
-                                                                                
-    }                                                                           
-                                                                                
-                                                                                
+    process_last_match(token_ptr, previous_end, out_file);
+
    // Free up the regular expression**/                                         
   pcre_free(re);                                                                
 }                
+
+
+void process_nonmatch(FILE *out_file, char *unmatch) {
+    fprintf(out_file, "===>  '%s'\n", unmatch);
+    process_matching(out_file, unmatch);
+}
+
+void process_last_match(char *token_ptr, int previous_end, FILE *out_file) {
+    if (strlen(token_ptr) > previous_end) {
+        const char *unmatched = token_ptr + previous_end;
+        
+        // Create a buffer to copy non-whitespace content
+        char nonWhitespaceSegment[128] = {0}; // Adjust size as needed
+        int j = 0;
+
+        // Copy only non-whitespace characters to the buffer
+        for (int i = 0; unmatched[i] != '\0'; ++i) {
+            if (!isspace((unsigned char)unmatched[i])) {
+                nonWhitespaceSegment[j++] = unmatched[i];
+            }
+        }
+        nonWhitespaceSegment[j] = '\0'; // Null-terminate the string
+
+        // Only process if there's non-whitespace content
+        if (j > 0) {
+            process_nonmatch(out_file, nonWhitespaceSegment);
+        }
+    }
+}
+
+
+// Add any additional necessary includes or definitions
+
+
+
+// Function to check if a character is not a whitespace or tab
+int isNotWhitespaceOrTab(char* c) {
+    return *c != ' ' && *c != '\t';
+}
+
+
+void process_lexeme(char* lexeme) {
+    static int statementCount = 1;
+    static int lexemeCount = 0;
+    static bool needToPrintStatementHeader = true;
+
+    // Check if we need to print the statement header
+    if (needToPrintStatementHeader) {
+        fprintf(out_file, "Statement #%d\n", statementCount++);
+        needToPrintStatementHeader = false;
+        lexemeCount = 0;
+    }
+
+    // Print the lexeme
+    fprintf(out_file, "Lexeme %d is %s",lexemeCount++, lexeme);
+    process_matching(out_file, lexeme); 
+
+    // If the lexeme is a semicolon, the next lexeme will be part of a new statement
+    if (strcmp(lexeme, ";") == 0) {
+        fprintf(out_file, "---------------------------------------------------------\n");
+        needToPrintStatementHeader = true;
+    }
+}
+
+
+TokenCategory match_token_category(char* lexeme) {
+    if (strcmp(lexeme, "+") == 0) return ADD_OP;
+    else if (strcmp(lexeme, "-") == 0) return SUB_OP;
+    else if (strcmp(lexeme, "*") == 0) return MULT_OP;
+    else if (strcmp(lexeme, "/") == 0) return DIV_OP;
+    else if (strcmp(lexeme, "(") == 0) return LEFT_PAREN;
+    else if (strcmp(lexeme, ")") == 0) return RIGHT_PAREN;
+    else if (strcmp(lexeme, "^") == 0) return EXPON_OP;
+    else if (strcmp(lexeme, "=") == 0) return ASSIGN_OP;
+    else if (strcmp(lexeme, "<") == 0) return LESS_THEN_OP;
+    else if (strcmp(lexeme, "<=") == 0) return LESS_THEN_OR_EQUAL_OP;
+    else if (strcmp(lexeme, ">") == 0) return GREATER_THEN_OP;
+    else if (strcmp(lexeme, ">=") == 0) return GREATER_THEN_OR_EQUAL_OP;
+    else if (strcmp(lexeme, "==") == 0) return EQUALS_OP;
+    else if (strcmp(lexeme, "!") == 0) return NOT_OP;
+    else if (strcmp(lexeme, "!=") == 0) return NOT_EQUALS_OP;
+    else if (strcmp(lexeme, ";") == 0) return SEMI_COLON;
+    else if (lexeme[0] >= '0' && lexeme[0] <= '9') return INT_LITERAL; // Simplistic check for an integer literal
+    else return UNKNOWN;
+}
+
+void process_matching(FILE *file, char* lexeme) {
+    TokenCategory category = match_token_category(lexeme);
+    switch (category) {
+        case ADD_OP: fprintf(file, " and is an ADD_OP\n"); break;
+        case SUB_OP: fprintf(file, " and is a SUB_OP\n"); break;
+        case MULT_OP: fprintf(file, " and is a MULT_OP\n"); break;
+        case DIV_OP: fprintf(file, " and is a DIV_OP\n"); break;
+        case LEFT_PAREN: fprintf(file, " and is a LEFT_PAREN\n"); break;
+        case RIGHT_PAREN: fprintf(file, " and is a RIGHT_PAREN\n"); break;
+        case EXPON_OP: fprintf(file, " and is an EXPON_OP\n"); break;
+        case ASSIGN_OP: fprintf(file, " and is an ASSIGN_OP\n"); break;
+        case LESS_THEN_OP: fprintf(file, " and is a LESS_THEN_OP\n"); break;
+        case LESS_THEN_OR_EQUAL_OP: fprintf(file, " and is a LESS_THEN_OR_EQUAL_OP\n"); break;
+        case GREATER_THEN_OP: fprintf(file, " and is a GREATER_THEN_OP\n"); break;
+        case GREATER_THEN_OR_EQUAL_OP: fprintf(file, " and is a GREATER_THEN_OR_EQUAL_OP\n"); break;
+        case EQUALS_OP: fprintf(file, " and is an EQUALS_OP\n"); break;
+        case NOT_OP: fprintf(file, " and is a NOT_OP"); break;
+        case NOT_EQUALS_OP: fprintf(file, " and is a NOT_EQUALS_OP\n"); break;
+        case SEMI_COLON: fprintf(file, " and is a SEMI_COLON\n"); break;
+        case INT_LITERAL: fprintf(file, " and is an INT_LITERAL\n"); break;
+        default: fprintf(file, "Lexical error: not a lexeme\n");
+    }
+}
+
+
