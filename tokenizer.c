@@ -86,36 +86,27 @@ int main(int argc, char *argv[])
  {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
     // Use helper functions. No duplicate code!                                 
-                                                                                
     const char *error;                                                          
     int erroffset;                                                              
     pcre *re;                                                                   
-    int ovector[30];                                                            
-    int rc;                                                                     
-                                                                                
+    int ovector[30], rc;                                                                     
     // Pattern to match numbers, single and double character operators          
     char *pattern = "(\\d+|!=|==|<=|>=|[=+\\-*/^<>();])";                
                                                                                 
     // Compile the regular expression pattern                                   
     re = pcre_compile(pattern, 0, &error, &erroffset, NULL);                    
                                                                                 
-                                                                                
     if (re == NULL)                                                             
     {                                                                           
       printf("PCRE compilation failed at offset %d: %s\n", erroffset, error);   
       exit(EXIT_FAILURE);                                                       
-    }                                                                           
-
-                                                                                
-    // Execute the regular expression to find the next token                    
+    }                                                                                  
     // Execute the regular expression and find matches                          
     int i = 0;
     int previous_end = 0; // Track end of the last match
     while ((rc = pcre_exec(re, NULL, token_ptr, strlen(token_ptr), i, 0,
         ovector, sizeof(ovector)/sizeof(ovector[0]))) >= 0) {
-         
-         
-          // Handle non-matching segment before this match
+         // Handle non-matching segment before this match
         if (ovector[0] > previous_end && isNotWhitespaceOrTab(token_ptr +
             previous_end)) {
         // There's a non-matching segment before this match
@@ -127,8 +118,7 @@ int main(int argc, char *argv[])
         // Process non-matching segment (e.g., log error, handle as invalid input)
             process_nonmatch(out_file, nonmatch);
         }
-
-
+         
          char substring[128]; // Buffer to hold the matched substring           
          int substring_length = ovector[1] - ovector[0];                        
          strncpy(substring, token_ptr  + ovector[0], substring_length);         
