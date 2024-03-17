@@ -1,11 +1,17 @@
-/**                                                                             
- * This header file defines the interface and necessary constants for           
- * the tokenizer.c program.                                                     
- *                                                                              
- * @file tokenizer.h                                                            
- * @brief Header file for the tokenizer project.                                
- * @author Dagmawi Negatu and Darwin Bueso Galdamez                             
- * @version 03/16/2024                                                          
+**
+ * @file tokenizer.h
+ * @brief Header file for the tokenizer project, which provides functionality for tokenizing
+ * textual input into recognizable tokens (lexemes) according to specified patterns. It includes
+ * definitions for maximum line lengths, token sizes, boolean values, and token categories. This
+ * file declares functions for processing tokens, handling unmatched segments, and categorizing
+ * lexemes. The tokenizer is capable of distinguishing various types of operators, parentheses,
+ * integer literals, and identifies unrecognized segments as unknown tokens. It supports detailed
+ * token analysis, including identifying token categories and handling lexical errors. This header
+ * facilitates the implementation of a lexical analyzer as part of a compiler or interpreter for
+ * programming languages or data formats.
+ *
+ * @author Dagmawi Negatu and Darwin Bueso Galdamez
+ * @version 03/16/2024
  */
 
 /* Constants */
