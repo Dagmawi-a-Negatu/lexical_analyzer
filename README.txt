@@ -12,8 +12,9 @@ Overview
 This project implements a simple tokenizer in C, capable of analyzing 
 input text files and identifying various tokens based on predefined patterns. 
 The tokenizer recognizes arithmetic operators, parentheses, integer literals, 
-and several other token categories, marking unrecognized tokens as lexical errors. 
-This utility is particularly useful for lexical analysis in compilers or interpreters.
+and several other token categories, marking unrecognized tokens as lexical 
+errors. This utility is particularly useful for lexical analysis in compilers 
+or interpreters.
 
 
 Project Files
@@ -31,8 +32,7 @@ files showcasing the tokenizer's ability to parse input and handle errors.
 
 Usage
 
-To compile and run the tokenizer program in Agora, follow these steps on an environment 
-with GCC and PCRE installed.
+To compile and run the tokenizer program in Agora, follow these steps...
 
 Make sure you are inside the Project Directory.
 
@@ -46,8 +46,8 @@ Note: It does not display any warnings!
  
 Run the program:
 
-To verify the correct operation of the tokenizer, you can use the provided unix_input.txt 
-and unix_input_errors.txt files. 
+To verify the correct operation of the tokenizer, you can use the provided 
+unix_input.txt and unix_input_errors.txt files. 
 
 ./tokenizer unix_input.txt output_test.txt
 
@@ -58,8 +58,8 @@ and
 
 
 After running the tokenizer as described above, compare 
-the output files to the expected outputs provided in output_with_tokens.txt and 
-output_errors_with_tokens.txt. 
+the output files to the expected outputs provided in output_with_tokens.txt 
+and output_errors_with_tokens.txt. 
 
 The tokenizer should correctly categorize each token and 
 handle lexical errors for unrecognized symbols.
