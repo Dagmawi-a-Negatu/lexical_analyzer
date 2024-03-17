@@ -1,12 +1,23 @@
                                            
-/**                                                                             
- * tokenizer.c - A simple token recognizer.                                     
- * This program tokenizes given input based on regular expressions.                                                                            
- * NOTE: The terms 'token' and 'lexeme' are used interchangeably in this        
- *       program.                                                               
- *                                                                              
- * @author Dagmawi Negatu and Darwin Bueso Galdamez                                                            
- * @version 03/16/2024                                                          
+/**
+ * tokenizer.c - A simple token recognizer. 
+ * 
+ * This program tokenizes textual input based on predefined patterns, extracting
+ * meaningful lexemes such as operators, literals, and symbols. It uses PCRE (Perl
+ * Compatible Regular Expressions) to match patterns and categorize each lexeme.
+ * The tokenizer supports various token categories including arithmetic operators,
+ * assignment operators, parentheses, and integer literals. Unrecognized tokens
+ * are flagged as lexical errors, enhancing the debugging process during lexical
+ * analysis.
+ * 
+ * The program processes input line-by-line, tokenizes each line into lexemes, and
+ * categorizes them according to the defined patterns. It handles non-matching
+ * segments and whitespace, ensuring comprehensive analysis of the input text. 
+ * 
+ * @file tokenizer.c
+ * @brief Implements tokenization logic for analyzing and categorizing textual input.
+ * @author Dagmawi Negatu and Darwin Bueso Galdamez
+ * @version 03/16/2024
  */                                                                            
                                                                                 
 #include <stdio.h>                                                              
@@ -27,14 +38,29 @@ int count; //Global variable that counts lexeme
 // Function prototypes                                                          
 void get_token(char *token_ptr);                                                
                                                                                 
-/**                                                                             
- * Main function of the tokenizer.                                              
- * Opens the input and output files, reads the input file                       
- * line by line, and processes each line.                                       
- *                                                                              
- * @param argc Number of command line arguments                                 
- * @param argv Array of command line arguments                                  
- * @return Exit status code                                                     
+/**
+ * The main function serves as the entry point for the tokenizer program. 
+ * It takes two command line arguments: the path to the input file and the 
+ * path to the output file. The program reads from the input file line by 
+ * line, tokenizes each line using regular expressions to identify meaningful 
+ * lexemes, and writes the results to the output file. Each lexeme is 
+ * categorized, and its details are logged for further processing. 
+ * 
+ * This function also performs error checking to ensure both input and output 
+ * files can be successfully opened. If an error occurs, it prints a relevant 
+ * error message and terminates execution with an exit status of 1. 
+ * This approach ensures that users are immediately aware of any issues with 
+ * file access, allowing for quick troubleshooting.
+ * 
+ * 
+ * @param argc The number of command-line arguments passed to the program.
+ * @param argv An array of pointers to the strings which are those 
+ * command-line arguments. Expected arguments are the paths to the input 
+ * file and the output file, in that order.
+ * 
+ * @return Returns 0 upon successful execution to indicate to the operating 
+ * system that the program has completed without errors. Returns 1 if an error 
+ * occurs, signaling an unsuccessful execution.
  */                                                                             
 int main(int argc, char *argv[])                                                
 {                                                                               
@@ -84,15 +110,20 @@ int main(int argc, char *argv[])
   return 0;                                                                     
                                                                                 
 }                                                                               
-  /**                                                                           
-   * Tokenizes a given string based on predefined                               
-   * regular expressions.                                                       
-   *                                                                            
-   * It finds all the tokens in the given string and                            
-   * prints them to the output file.                                            
-   *                                                                            
-   * @param token_ptr Pointer to the string to be tokenized                     
-   */                                                                           
+  /**
+ * Tokenizes the input string into recognized tokens using predefined regular 
+ * expressions. Each token found is categorized and processed, and details are 
+ * printed to the output file. The function handles both matching tokens and 
+ * segments of text that do not match any token patterns, ensuring comprehensive 
+ * analysis of the input. Non-matching segments can indicate potential errors or 
+ * unrecognized symbols. After tokenizing, it also addresses any remaining text 
+ * post-last recognized token for completeness.
+ *
+ * Utilizes PCRE for efficient pattern matching, crucial for parsing in compilers 
+ * and interpreters.
+ *
+ * @param token_ptr Pointer to the input string to be tokenized.
+ */                                                                            
  void get_token(char *token_ptr)                                                
  {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
@@ -147,27 +178,31 @@ int main(int argc, char *argv[])
   pcre_free(re);                                                                
 }                
 
-/**                                                                             
- * Handles non-matching segments found during tokenization.                     
- * This function will print or log the non-matching segment                     
- * to help identify issues with the input.                                      
- *                                                                              
- * @param out_file File pointer to the output file                              
- * @param unmatch String containing the non-matching segment                    
+/**
+ * Logs non-matching segments identified during tokenization.
+ * These segments could indicate input errors or unrecognized characters. 
+ * By logging them, this function aids in debugging and refining the 
+ * tokenization process. It leverages theprocess_matching function to 
+ * further analyze and categorize the non-matching segment if possible.
+ *
+ * @param out_file File pointer for logging the non-matching segments.
+ * @param unmatch The text of the non-matching segment.
  */
 void process_nonmatch(FILE *out_file, char *unmatch) {
     fprintf(out_file, "===>  '%s'\n", unmatch);
     process_matching(out_file, unmatch);
 }
 
-/**                                                                             
- * This function processes any remaining text in the input after the            
- * last recognized token. It filters out whitespace and handles                 
- * any non-whitespace segments that were not matched by the token patterns.     
- *                                                                              
- * @param token_ptr Pointer to the start of the text being tokenized.           
- * @param previous_end Index where the last token match ended.                  
- * @param out_file Pointer to the output file for logging.                      
+/**
+ * Processes and logs the text following the last matched token, if any.
+ * This function aims to identify and handle any remaining text that was 
+ * not captured by the main tokenization patterns. It focuses on non-whitespace 
+ * segments, indicating potentially unrecognized or incorrectly formatted input, 
+ * and logs these for further analysis.
+ *
+ * @param token_ptr Pointer to the input text.
+ * @param previous_end Position at which the last token was recognized.
+ * @param out_file Output file for logging any findings.
  */
 void process_last_match(char *token_ptr, int previous_end, FILE *out_file) {
     if (strlen(token_ptr) > previous_end) {
@@ -204,12 +239,18 @@ int isNotWhitespaceOrTab(char* c) {
     return *c != ' ' && *c != '\t';
 }
 
-/**                                                                             
- * Processes a lexeme, prints its details, and determines if a new statement begins.
- * This function increments the statement count and resets the lexeme count     
- * when encountering a semicolon, indicating the start of a new statement.      
- *                                                                              
- * @param lexeme The lexeme to process and print.                               
+/**
+ * This function processes each lexeme found within the input text, prints 
+ * its details, and checks for statement delimiters (semicolons). Upon 
+ * encountering a semicolon, it signifies the end of the current statement 
+ * and the potential start of a new one. Consequently, the function increments 
+ * the statement counter and resets the lexeme counter to prepare for the next 
+ * statement.
+ * 
+ * Each new statement is introduced with a header for clarity. Between statements, 
+ * a separator line is printed for better visual separation in the output file.
+ *
+ * @param lexeme The current lexeme to be processed and printed.
  */
 void process_lexeme(char* lexeme) {
     static int statementCount = 1;
@@ -235,13 +276,20 @@ void process_lexeme(char* lexeme) {
 }
 
 
-/**                                                                             
- * Determines the category of a given lexeme based on its value.                
- * It matches the lexeme to a predefined set of token categories,               
- * including operators, parentheses, and literals.                              
- *                                                                              
- * @param lexeme The lexeme to categorize.                                      
- * @return The TokenCategory enum value corresponding to the lexeme.            
+/**
+ * This function categorizes a given lexeme into one of the predefined 
+ * token categories, such as arithmetic operators, parentheses, comparison 
+ * operators, or literals. It facilitates the semantic analysis of tokens 
+ * by providing a uniform way to refer to the types of tokens encountered 
+ * in the input text. 
+ * 
+ * If a lexeme does not match any of the predefined categories, it is 
+ * categorized as UNKNOWN, which may indicate an unrecognized token or 
+ * lexical error.
+ *
+ * @param lexeme The lexeme to be evaluated and categorized.
+ * @return A TokenCategory enumeration value representing the category of 
+ * the lexeme.
  */
 TokenCategory match_token_category(char* lexeme) {
     if (strcmp(lexeme, "+") == 0) return ADD_OP;
@@ -264,13 +312,18 @@ TokenCategory match_token_category(char* lexeme) {
     else return UNKNOWN;
 }
 
-/**                                                                             
- * Processes the given lexeme by matching it to its corresponding token category
- * and prints its category to the output file. If the lexeme does not match any 
- * predefined category, a lexical error message is printed.                     
- *                                                                              
- * @param file The output file where the lexeme category is printed.            
- * @param lexeme The lexeme to process.                                         
+/**
+ * This function processes each lexeme, identifies its token category, 
+ * and prints a descriptive statement to the output file indicating the 
+ * category of the lexeme. 
+ * 
+ * It uses the categorization provided by `match_token_category` to apply 
+ * the appropriate label. If the lexeme does not match any predefined category, 
+ * indicating a potential lexical error or an unrecognized token, an error message 
+ * is printed to alert the user.
+ *
+ * @param file Pointer to the file where lexeme analysis results are logged.
+ * @param lexeme String representing the lexeme to be analyzed and categorized.
  */
 void process_matching(FILE *file, char* lexeme) {
     TokenCategory category = match_token_category(lexeme);
