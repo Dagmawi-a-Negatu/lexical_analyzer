@@ -1,5 +1,6 @@
                                            
 /**
+ *
  * tokenizer.c - A simple token recognizer. 
  * 
  * This program tokenizes textual input based on predefined patterns, extracting
@@ -33,10 +34,8 @@ char *line; // Global pointer to line of input
 // (optional) can declare some additional variable if you want to               
                                                                         
 FILE  *out_file = NULL;                                                         
-int count; //Global variable that counts lexeme                                                    
-                                                                                
-// Function prototypes                                                          
-void get_token(char *token_ptr);                                                
+                                                   
+                                                                                                                                
                                                                                 
 /**
  * The main function serves as the entry point for the tokenizer program. 
@@ -63,11 +62,9 @@ void get_token(char *token_ptr);
  * occurs, signaling an unsuccessful execution.
  */                                                                             
 int main(int argc, char *argv[])                                                
-{                                                                               
-  char token[TSIZE];     /* Spot to hold a token, fixed size */                 
+{                                                                                
   char input_line[LINE]; /* Line of input, fixed size        */                 
-  FILE *in_file = NULL;  /* File pointer                     */                 
-  int start = 0;                                                                
+  FILE *in_file = NULL;  /* File pointer                     */                                                                              
                                                                                 
                                                                                 
   if (argc != 3)                                                                
@@ -89,9 +86,7 @@ int main(int argc, char *argv[])
     fprintf(stderr, "ERROR: could not open %s for writing\n", argv[2]);         
     exit(1);                                                                    
   }                                                                             
-                                                                              
-  
-  count = 0; //lexeme count is 0                                                                              
+                                                                                                                                                           
   while (fgets(input_line, LINE, in_file) != NULL)                              
   {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
@@ -161,10 +156,12 @@ int main(int argc, char *argv[])
             process_nonmatch(out_file, nonmatch);
         }
          
-         char substring[128]; // Buffer to hold the matched substring           
+         //Extracts the lexeme found starting from the first lexeme
+         char substring[TSIZE]; // Buffer to hold the matched substring           
          int substring_length = ovector[1] - ovector[0];                        
          strncpy(substring, token_ptr  + ovector[0], substring_length);         
-         substring[substring_length] = '\0';                                                                                                    
+         substring[substring_length] = '\0';                       
+         //We have found a lexeme, process the lexeme to the output file                                                                             
          process_lexeme(substring);
 
          previous_end = ovector[1];
@@ -172,7 +169,9 @@ int main(int argc, char *argv[])
                                                                                                                                                        
     }
                                                                                 
+    //Process if there is a possible unmatched character ending a statement
     process_last_match(token_ptr, previous_end, out_file);
+
 
    // Free up the regular expression**/                                         
   pcre_free(re);                                                                

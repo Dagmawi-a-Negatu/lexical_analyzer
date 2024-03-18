@@ -1,4 +1,4 @@
-**
+/**
  * @file tokenizer.h
  * @brief Header file for the tokenizer project, which provides functionality for tokenizing
  * textual input into recognizable tokens (lexemes) according to specified patterns. It includes
@@ -41,6 +41,7 @@ typedef enum {
  * @return Returns 1 if not a space/tab, 0 otherwise.                           
  */
 int isNotWhitespaceOrTab(char *);
+
 
 /**
  * Processes and logs the text following the last matched token, if any.

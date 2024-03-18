@@ -30,6 +30,8 @@ Lexeme 9 is ; and is a SEMI_COLON
 ---------------------------------------------------------
 Statement #4
 Lexeme 0 is 1 and is an INT_LITERAL
+===>  '@ '
+Lexical error: not a lexeme
 Lexeme 1 is == and is an EQUALS_OP
 Lexeme 2 is = and is an ASSIGN_OP
 Lexeme 3 is 2 and is an INT_LITERAL
@@ -40,3 +42,10 @@ Lexeme 0 is 2 and is an INT_LITERAL
 Lexeme 1 is * and is a MULT_OP
 Lexeme 2 is * and is a MULT_OP
 Lexeme 3 is 9 and is an INT_LITERAL
+Lexeme 4 is ; and is a SEMI_COLON
+---------------------------------------------------------
+Statement #6
+Lexeme 0 is 3 and is an INT_LITERAL
+Lexeme 1 is * and is a MULT_OP
+===>  '@'
+Lexical error: not a lexeme
