@@ -32,7 +32,7 @@
 // global variables                                                             
 char *line; // Global pointer to line of input                                  
 // (optional) can declare some additional variable if you want to               
-                                                                        
+//Output file meant to hold the writing of extracted lexemes                                                                        
 FILE  *out_file = NULL;                                                         
                                                    
                                                                                                                                 
@@ -122,8 +122,8 @@ int main(int argc, char *argv[])
  void get_token(char *token_ptr)                                                
  {                                                                             
     // Add code here. Keep this file no longer than 50 lines of code.           
-    // Use helper functions. No duplicate code!                                 
-    const char *error;                                                          
+    // required variables by the perl compatiable expression                                
+    const char *error;                                                       
     int erroffset;                                                              
     pcre *re;                                                                   
     int ovector[30], rc;                                                                     
